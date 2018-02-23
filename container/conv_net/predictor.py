@@ -8,11 +8,9 @@ import shutil
 import json
 
 import flask
+import numpy as np
 
 import torchvision
-
-import pandas as pd
-import numpy as np
 
 from fastai.imports import *
 

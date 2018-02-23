@@ -2,7 +2,10 @@
 # This is a Python 2 image that uses the nginx, gunicorn, flask stack
 # for serving inferences in a stable way.
 
-FROM 934676248949.dkr.ecr.eu-west-1.amazonaws.com/fastai:alpha
+ARG aws_account_id
+ARG aws_region
+
+FROM $aws_account_id.dkr.ecr.$aws_region.amazonaws.com/fastai:latest
 
 MAINTAINER Matt McClean <mmcclean@amazon.com>
 
