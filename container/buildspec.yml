@@ -5,6 +5,11 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - echo Check if fastai base image created
+      - base_image="fastai"
+      - build_base() { echo "Build and push fastai base image" && docker build -t ${base_image}:latest fastai-base && docker tag ${base_image}:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/${base_image}:latest && docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/${base_image}:latest;  }
+      - imageCount=$(aws ecr describe-images --repository-name $base_image --query 'imageDetails[] | length(@)' --region $AWS_DEFAULT_REGION)
+      - if [ "$imageCount" -eq "0" ]; then build_base(); fi
   build:
     commands:
       - echo Build started on `date`
