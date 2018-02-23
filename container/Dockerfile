@@ -1,4 +1,4 @@
- q# Build an image that can do training and inference in SageMaker
+# Build an image that can do training and inference in SageMaker
 # This is a Python 2 image that uses the nginx, gunicorn, flask stack
 # for serving inferences in a stable way.
 
