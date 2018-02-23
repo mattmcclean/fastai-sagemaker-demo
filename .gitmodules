@@ -1,0 +1,3 @@
+[submodule "fastai-base"]
+	path = fastai-base
+	url = https://github.com/mattmcclean/fastai-docker-codebuild.git
