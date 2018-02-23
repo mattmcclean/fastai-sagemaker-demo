@@ -9,7 +9,7 @@ phases:
       - base_image="fastai"
       - build_base() { echo "Build and push fastai base image" && docker build -t ${base_image}:latest fastai-base && docker tag ${base_image}:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/${base_image}:latest && docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/${base_image}:latest; }
       - imageCount=$(aws ecr describe-images --repository-name $base_image --query 'imageDetails[] | length(@)' --region $AWS_DEFAULT_REGION)
-      - if [ "$imageCount" -eq "0" ]; then build_base; fi
+      - if [ "$imageCount" -eq "0" ]; then build_base; else echo "Image: ${base_image} already uploaded to repository"; fi
   build:
     commands:
       - echo Build started on `date`
