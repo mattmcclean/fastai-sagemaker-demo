@@ -30,5 +30,6 @@ ENV PATH="/opt/program:${PATH}"
 # Set up the program in the image
 COPY conv_net /opt/program
 WORKDIR /opt/program
+RUN chmod 755 serve train
 
 RUN ln -s /fastai/fastai fastai
