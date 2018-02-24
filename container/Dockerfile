@@ -5,7 +5,7 @@
 ARG aws_account_id
 ARG aws_region
 
-FROM $aws_account_id.dkr.ecr.$aws_region.amazonaws.com/fastai:latest
+FROM $aws_account_id.dkr.ecr.$aws_region.amazonaws.com/fastai:cpu
 
 MAINTAINER Matt McClean <mmcclean@amazon.com>
 
