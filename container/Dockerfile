@@ -1,27 +1,42 @@
-# Build an image that can do training and inference in SageMaker
-# This is a Python 2 image that uses the nginx, gunicorn, flask stack
-# for serving inferences in a stable way.
+FROM ubuntu:16.04
 
-ARG aws_account_id
-ARG aws_region
-
-FROM $aws_account_id.dkr.ecr.$aws_region.amazonaws.com/fastai:cpu
-
-MAINTAINER Matt McClean <mmcclean@amazon.com>
-
-RUN apt-get -y update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --allow-downgrades --no-install-recommends \
+         build-essential \
+         cmake \
+         git \
+         curl \
+         vim \
+         ca-certificates \
+         python-qt4 \
+         libjpeg-dev \
+	       zip \
+	       unzip \
          nginx \
-    && rm -rf /var/lib/apt/lists/*
+         libpng-dev &&\
+     rm -rf /var/lib/apt/lists/*
 
-# Here we get all python packages.
-# These optimizations save a fair amount of space in the image, which reduces start up time.
+ENV PYTHON_VERSION=3.6
+RUN curl -o ~/miniconda.sh -O  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh  && \
+     chmod +x ~/miniconda.sh && \
+     ~/miniconda.sh -b -p /opt/conda && \
+     rm ~/miniconda.sh && \
+    /opt/conda/bin/conda install conda-build
+
+RUN git clone https://github.com/fastai/fastai.git
+RUN cd fastai/ && ls && /opt/conda/bin/conda env create -f environment-cpu.yml
+RUN /opt/conda/bin/conda clean -ya
+
+ENV PATH /opt/conda/envs/fastai-cpu/bin:$PATH
+ENV USER fastai
+
+WORKDIR /fastai
+
+CMD source activate fastai-cpu
+CMD source ~/.bashrc
+
+# Here we install the extra python packages to run the inference code
 RUN pip install flask gevent gunicorn && \
         rm -rf /root/.cache
-
-# Set some environment variables. PYTHONUNBUFFERED keeps Python from buffering our standard
-# output stream, which means that logs can be delivered to the user quickly. PYTHONDONTWRITEBYTECODE
-# keeps Python from writing the .pyc files which are unnecessary in this case. We also update
-# PATH so that the train and serve programs are found when the container is invoked.
 
 ENV PYTHONUNBUFFERED=TRUE
 ENV PYTHONDONTWRITEBYTECODE=TRUE
